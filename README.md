@@ -35,7 +35,7 @@ Here are some examples of questions you can ask the bot:
 
 1. Clone the repository to your local machine.
     ```
-    git clone https://github.com/your-username/your-repo-name.git
+    git clone https://github.com/EugeneBudzinskiy/rag_qa_bot
     ```
 
 2. Install the necessary dependencies from the requirements.txt file. 
