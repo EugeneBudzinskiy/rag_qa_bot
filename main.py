@@ -28,8 +28,7 @@ def main():
             st.markdown(prompt)
         st.session_state.messages.append({"role": "user", "content": prompt})
 
-        history = "\n\n".join([f"{x['role']}: {x['content']}" for x in st.session_state.messages])
-        response = tools.query_rag(query=prompt, history=history)
+        response = tools.query_rag(question=prompt, history=st.session_state.messages)
         with st.chat_message("assistant"):
             st.markdown(response)
         st.session_state.messages.append({"role": "assistant", "content": response})

@@ -8,21 +8,18 @@ class Tools:
         self.database = Database()
         self.chain = Chain()
 
-    def query_rag(self, query: str, history: str) -> str:
-        if self.chain.check_if_greeting(question=query):
-            return self.chain.get_greeting_response(question=query)
+    def query_rag(self, question: str, history: list[dict[str, str]]) -> str:
+        context = "no context"
 
-        for _ in range(config.MAX_TRANSFORM_QUESTION_ITERATIONS):
-            query_result = self.database.collection.query(query_texts=query, n_results=config.RELEVANT_N_RESULTS)
-            docs = "\n\n".join(query_result["documents"][0])
+        if self.chain.trigger_rag(question=question):
 
-            if self.chain.check_if_relevant(question=query, docs=docs):
-                break
+            for _ in range(config.MAX_TRANSFORM_QUESTION_ITERATIONS):
+                query_result = self.database.collection.query(query_texts=question, n_results=config.RELEVANT_N_RESULTS)
+                context = "\n\n".join(query_result["documents"][0])
 
-            query = self.chain.transform_question(question=query, docs=docs, history=history)
+                if self.chain.check_relevant(question=question, context=context):
+                    break
 
-        else:
-            # Run out of iterations
-            return self.chain.get_fallback(question=query)
+                question = self.chain.transform_question(question=question, context=context, history=history)
 
-        return self.chain.get_answer(question=query, docs=docs, history=history)
+        return self.chain.answer_question(question=question, context=context, history=history)
